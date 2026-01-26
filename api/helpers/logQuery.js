@@ -14,15 +14,11 @@ if (!getApps().length) {
 
 const db = getFirestore();
 
-export default async function logQuery({ projectId, question, answer, useThinkingModel, hasScreenshot, chatHistoryLength }) {
+export default async function logQuery(endpoint, data) {
   try {
     await db.collection('queries').add({
-      projectId,
-      question,
-      answer,
-      useThinkingModel,
-      hasScreenshot,
-      chatHistoryLength,
+      endpoint,
+      ...data,
       createdAt: new Date()
     });
   } catch (err) {

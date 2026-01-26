@@ -159,7 +159,7 @@ I don't have a screenshot of my Scratch environment to share.`);
     const audioBase64 = buffer.toString('base64');
 
     // Log query to Firebase (don't await to avoid blocking response)
-    logQuery({
+    logQuery('scratch-ai', {
       projectId,
       question,
       answer,

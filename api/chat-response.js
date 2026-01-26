@@ -1,5 +1,6 @@
 import convertScratchURLToBlocks from "./helpers/convertScratchURLToBlocks.js";
 import OpenAI from "openai";
+import logQuery from "./helpers/logQuery.js";
 
 export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -176,7 +177,7 @@ I don't have a screenshot of my Scratch environment to share.`);
     console.log("Messages array:", JSON.stringify(messages, null, 2));
 
     // Determine which model to use based on useThinkingModel parameter
-    const modelName = useThinkingModel ? "o4-mini" : "gpt-4.1";
+    const modelName = useThinkingModel ? "gpt-5-nano" : "gpt-5-mini";
     console.log(`Using model: ${modelName} (Thinking mode: ${useThinkingModel}, Screenshot: ${screenshot ? 'yes' : 'no'})`);
 
     const openai = new OpenAI(process.env.OPENAI_API_KEY);
@@ -210,6 +211,16 @@ I don't have a screenshot of my Scratch environment to share.`);
         })}\n\n`);
       }
     }
+
+    // Log query to Firebase (don't await to avoid blocking response)
+    logQuery('chat-response', {
+      projectId,
+      question,
+      answer: streamedResponse,
+      useThinkingModel,
+      hasScreenshot: !!screenshot,
+      chatHistoryLength: chatHistory?.length || 0
+    });
 
     // Send final message with project token
     res.write(`data: ${JSON.stringify({ 

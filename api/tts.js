@@ -1,4 +1,5 @@
 import OpenAI from "openai";
+import logQuery from "./helpers/logQuery.js";
 
 export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -42,6 +43,12 @@ export default async function handler(req, res) {
     
     // Convert buffer to base64 string
     const audioBase64 = buffer.toString('base64');
+
+    // Log query to Firebase (don't await to avoid blocking response)
+    logQuery('tts', {
+      textLength: text.length,
+      audioSizeBytes: buffer.length
+    });
 
     return res.status(200).json({ 
       audio: audioBase64,
