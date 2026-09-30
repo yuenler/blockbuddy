@@ -33,7 +33,7 @@ export default async function handler(req, res) {
     
     // Generate audio from the text response
     const audioResponse = await openai.audio.speech.create({
-      model: "tts-1",
+      model: "gpt-4o-mini-tts",
       voice: "nova", // Using a friendly voice appropriate for kids
       input: text.replace(/```scratchblocks[\s\S]*?```/g, ""), // Remove scratchblocks code from TTS input
     });

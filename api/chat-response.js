@@ -177,7 +177,8 @@ I don't have a screenshot of my Scratch environment to share.`);
     console.log("Messages array:", JSON.stringify(messages, null, 2));
 
     // Determine which model to use based on useThinkingModel parameter
-    const modelName = useThinkingModel ? "gpt-5-nano" : "gpt-4.1";
+    const modelName = "gpt-6.1-sol";
+    const reasoningEffort = useThinkingModel ? "medium" : "low";
     console.log(`Using model: ${modelName} (Thinking mode: ${useThinkingModel}, Screenshot: ${screenshot ? 'yes' : 'no'})`);
 
     const openai = new OpenAI(process.env.OPENAI_API_KEY);
@@ -195,6 +196,7 @@ I don't have a screenshot of my Scratch environment to share.`);
     // Create streaming completion
     const stream = await openai.chat.completions.create({
       model: modelName,
+      reasoning_effort: reasoningEffort,
       messages: messages,
       stream: true,
     });

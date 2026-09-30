@@ -133,12 +133,14 @@ I don't have a screenshot of my Scratch environment to share.`);
     console.log("Messages array:", JSON.stringify(messages, null, 2));
 
     // Determine which model to use based on useThinkingModel parameter
-    const modelName = useThinkingModel ? "gpt-5-nano" : "gpt-4.1";
+    const modelName = "gpt-6.1-sol";
+    const reasoningEffort = useThinkingModel ? "medium" : "low";
     console.log(`Using model: ${modelName} (Thinking mode: ${useThinkingModel}, Screenshot: ${screenshot ? 'yes' : 'no'})`);
 
     const openai = new OpenAI(process.env.OPENAI_API_KEY);
     const completion = await openai.chat.completions.create({
       model: modelName,
+      reasoning_effort: reasoningEffort,
       messages: messages,
     });
 
@@ -147,7 +149,7 @@ I don't have a screenshot of my Scratch environment to share.`);
 
     // Generate audio from the text response
     const audioResponse = await openai.audio.speech.create({
-      model: "tts-1",
+      model: "gpt-4o-mini-tts",
       voice: "nova", // Using a friendly voice appropriate for kids
       input: answer.replace(/```scratchblocks[\s\S]*?```/g, ""), // Remove scratchblocks code from TTS input
     });

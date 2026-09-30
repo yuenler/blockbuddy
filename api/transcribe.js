@@ -42,9 +42,9 @@ export default async function handler(req, res) {
     // Create a temporary file with the audio data in memory
     const file = new File([buffer], "audio.webm", { type: "audio/webm" });
     
-    // Send to Whisper API for transcription
+    // Send to OpenAI API for transcription
     const transcription = await openai.audio.transcriptions.create({
-      model: "whisper-1",
+      model: "gpt-transcribe",
       file: file,
     });
     
