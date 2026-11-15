@@ -14,6 +14,10 @@ if (!getApps().length) {
 
 const db = getFirestore();
 
+// BlockBuddy has been shut down: endpoints reply with SHUTDOWN_MESSAGE instead of calling OpenAI
+export const SHUT_DOWN = true;
+export const SHUTDOWN_MESSAGE = "BlockBuddy has been shut down. Thank you so much for using it to learn Scratch! You can remove the extension from your browser at chrome://extensions.";
+
 export default async function logQuery(endpoint, data) {
   try {
     await db.collection('queries').add({

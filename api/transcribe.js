@@ -1,5 +1,5 @@
 import OpenAI from "openai";
-import logQuery, { usageFields } from "./helpers/logQuery.js";
+import logQuery, { usageFields, SHUT_DOWN, SHUTDOWN_MESSAGE } from "./helpers/logQuery.js";
 
 export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -12,6 +12,10 @@ export default async function handler(req, res) {
   
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method Not Allowed" });
+  }
+
+  if (SHUT_DOWN) {
+    return res.status(503).json({ error: SHUTDOWN_MESSAGE });
   }
 
   try {

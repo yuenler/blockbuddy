@@ -1,6 +1,6 @@
 import convertScratchURLToBlocks from "./helpers/convertScratchURLToBlocks.js";
 import OpenAI from "openai";
-import logQuery, { usageFields } from "./helpers/logQuery.js";
+import logQuery, { usageFields, SHUT_DOWN, SHUTDOWN_MESSAGE } from "./helpers/logQuery.js";
 
 export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -11,6 +11,20 @@ export default async function handler(req, res) {
   }
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method Not Allowed" });
+  }
+
+  if (SHUT_DOWN) {
+    const projectId = typeof req.body === 'string' ? null : req.body?.projectId;
+    logQuery('chat-response', { projectId: projectId || null, shutDown: true });
+    res.writeHead(200, {
+      'Content-Type': 'text/event-stream',
+      'Cache-Control': 'no-cache',
+      'Connection': 'keep-alive'
+    });
+    res.write(`data: ${JSON.stringify({ chunk: SHUTDOWN_MESSAGE, done: false })}\n\n`);
+    res.write(`data: ${JSON.stringify({ chunk: '', done: true, fullResponse: SHUTDOWN_MESSAGE })}\n\n`);
+    res.end();
+    return;
   }
 
   try {
