@@ -26,3 +26,16 @@ export default async function logQuery(endpoint, data) {
     console.error('Error logging query:', err);
   }
 }
+
+// Flatten an OpenAI `usage` object into Firestore fields for cost tracking
+export function usageFields(usage) {
+  if (!usage) return {};
+  return {
+    inputTokens: usage.prompt_tokens ?? usage.input_tokens ?? null,
+    outputTokens: usage.completion_tokens ?? usage.output_tokens ?? null,
+    reasoningTokens: usage.completion_tokens_details?.reasoning_tokens ?? null,
+    cachedInputTokens: usage.prompt_tokens_details?.cached_tokens ?? usage.input_token_details?.cached_tokens ?? null,
+    audioInputTokens: usage.input_token_details?.audio_tokens ?? null,
+    audioSeconds: usage.type === 'duration' ? usage.seconds ?? null : null
+  };
+}

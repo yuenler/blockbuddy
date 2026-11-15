@@ -1,6 +1,6 @@
 import convertScratchURLToBlocks from "./helpers/convertScratchURLToBlocks.js";
 import OpenAI from "openai";
-import logQuery from "./helpers/logQuery.js";
+import logQuery, { usageFields } from "./helpers/logQuery.js";
 
 export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -199,10 +199,14 @@ I don't have a screenshot of my Scratch environment to share.`);
       reasoning_effort: reasoningEffort,
       messages: messages,
       stream: true,
+      stream_options: { include_usage: true },
     });
 
     // Stream the response chunks to the client
+    let usage = null;
     for await (const chunk of stream) {
+      // The final chunk carries token usage (and has no choices)
+      if (chunk.usage) usage = chunk.usage;
       const content = chunk.choices[0]?.delta?.content || '';
       if (content) {
         streamedResponse += content;
@@ -221,7 +225,10 @@ I don't have a screenshot of my Scratch environment to share.`);
       answer: streamedResponse,
       useThinkingModel,
       hasScreenshot: !!screenshot,
-      chatHistoryLength: chatHistory?.length || 0
+      chatHistoryLength: chatHistory?.length || 0,
+      model: modelName,
+      reasoningEffort,
+      ...usageFields(usage)
     });
 
     // Send final message with project token

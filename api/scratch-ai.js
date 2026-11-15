@@ -1,6 +1,6 @@
 import convertScratchURLToBlocks from "./helpers/convertScratchURLToBlocks.js";
 import OpenAI from "openai";
-import logQuery from "./helpers/logQuery.js";
+import logQuery, { usageFields } from "./helpers/logQuery.js";
 
 export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -167,7 +167,10 @@ I don't have a screenshot of my Scratch environment to share.`);
       answer,
       useThinkingModel,
       hasScreenshot: !!screenshot,
-      chatHistoryLength: chatHistory?.length || 0
+      chatHistoryLength: chatHistory?.length || 0,
+      model: modelName,
+      reasoningEffort,
+      ...usageFields(completion.usage)
     });
 
     return res.status(200).json({ 

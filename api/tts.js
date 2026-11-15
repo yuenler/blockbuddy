@@ -47,7 +47,8 @@ export default async function handler(req, res) {
     // Log query to Firebase (don't await to avoid blocking response)
     logQuery('tts', {
       textLength: text.length,
-      audioSizeBytes: buffer.length
+      audioSizeBytes: buffer.length,
+      model: "gpt-4o-mini-tts"
     });
 
     return res.status(200).json({ 

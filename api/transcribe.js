@@ -1,5 +1,5 @@
 import OpenAI from "openai";
-import logQuery from "./helpers/logQuery.js";
+import logQuery, { usageFields } from "./helpers/logQuery.js";
 
 export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -53,7 +53,9 @@ export default async function handler(req, res) {
     // Log query to Firebase (don't await to avoid blocking response)
     logQuery('transcribe', {
       transcribedText: transcription.text,
-      audioSizeBytes: buffer.length
+      audioSizeBytes: buffer.length,
+      model: "gpt-transcribe",
+      ...usageFields(transcription.usage)
     });
 
     return res.status(200).json({ 
